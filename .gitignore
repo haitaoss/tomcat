@@ -45,3 +45,8 @@ java/org/apache/catalina/startup/catalina.properties
 modules/jdbc-pool/bin
 modules/jdbc-pool/includes
 webapps/docs/jdbc-pool.xml
+
+
+# tomcat 编译依赖的jar
+/tomcat-build-libs/
+/output

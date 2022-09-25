@@ -1,81 +1,73 @@
-## Welcome to Apache Tomcat!
+# 本地运行tomcat源码
 
-### What Is It?
+## IDE 配置
 
-The Apache Tomcat® software is an open source implementation of the Java
-Servlet, JavaServer Pages, Java Expression Language and Java WebSocket
-technologies. The Java Servlet, JavaServer Pages, Java Expression Language and
-Java WebSocket specifications are developed under the
-[Java Community Process](https://jcp.org/en/introduction/overview).
+1. 下载代码 `git clone git@github.com:haitaoss/tomcat.git`
 
-The Apache Tomcat software is developed in an open and participatory
-environment and released under the
-[Apache License version 2](https://www.apache.org/licenses/). The Apache Tomcat
-project is intended to be a collaboration of the best-of-breed developers from
-around the world. We invite you to participate in this open development
-project. To learn more about getting involved,
-[click here](https://tomcat.apache.org/getinvolved.html) or keep reading.
+2. 下载 Ant，我下载的版本是 1.10.12 `https://ant.apache.org/bindownload.cgi`
 
-Apache Tomcat software powers numerous large-scale, mission-critical web
-applications across a diverse range of industries and organizations. Some of
-these users and their stories are listed on the
-[PoweredBy wiki page](https://wiki.apache.org/tomcat/PoweredBy).
+3. 配置环境变量
+    ```shell
+    export ANT_HOME=/opt/module/apache-ant-1.10.12
+    export PATH=$PATH:$ANT_HOME/bin
+    ```
+    
+4. 修改 Ant 下载依赖的目录
+   ```shell
+   $ pwd
+   /Users/haitao/Desktop/tomcat
+   
+   $ echo "base.path=./tomcat-build-libs" > ./build.properties
+   ```
+   
+5. 修改 IDE生成配置文件的模板(因为有个依赖的名字写错了)
+   ```shell
+   $ pwd
+   /Users/haitao/Desktop/tomcat
+      
+   $ vim ./res/ide-support/idea/tomcat.iml
+   
+   # 注意这个名字是 ant 下载出来的依赖，要改成你本地下载依赖的名字
+   # 将 bnd-5.1.1/biz.aQute.bnd-5.1.1.jar 改成 bnd-5.3.0-SNAPSHOT/biz.aQute.bnd-5.3.0-SNAPSHOT.jar
+   ```
+   
+6. 使用 Ant 生成对应 IDE 的配置文件
+    ```shell
+    $ pwd
+    /Users/haitao/Desktop/tomcat
+    
+    $ ant ide-intellij
+    ```
+7. 配置 IDEA 环境变量，不然识别不到依赖(改完还不生效 就重启IDEA)
+    ![image-20220925112234115](.README_imgs/image-20220925112234115.png)
+    ![image-20220925112101078](.README_imgs/image-20220925112101078.png)
 
-Apache Tomcat, Tomcat, Apache, the Apache feather, and the Apache Tomcat
-project logo are trademarks of the Apache Software Foundation.
+## 启动编译后的Tomcat
 
-### Get It
+### 方式一：脚本方式
 
-For every major Tomcat version there is one download page containing
-links to the latest binary and source code downloads, but also
-links for browsing the download directories and archives:
-- [Tomcat 10](https://tomcat.apache.org/download-10.cgi)
-- [Tomcat 9](https://tomcat.apache.org/download-90.cgi)
-- [Tomcat 8](https://tomcat.apache.org/download-80.cgi)
-- [Tomcat 7](https://tomcat.apache.org/download-70.cgi)
+> 查看日志`tail -fn 200 /Users/haitao/Desktop/tomcat/output/build/logs/catalina.out`
 
-To facilitate choosing the right major Tomcat version one, we have provided a
-[version overview page](https://tomcat.apache.org/whichversion.html).
+![image-20220925113801234](.README_imgs/image-20220925113801234.png)
 
-### Documentation
+### 方式二：IDE 源码启动
 
-The documentation available as of the date of this release is
-included in the docs webapp which ships with tomcat. You can access that webapp
-by starting tomcat and visiting <http://localhost:8080/docs/> in your browser.
-The most up-to-date documentation for each version can be found at:
-- [Tomcat 10](https://tomcat.apache.org/tomcat-10.0-doc/)
-- [Tomcat 9](https://tomcat.apache.org/tomcat-9.0-doc/)
-- [Tomcat 8](https://tomcat.apache.org/tomcat-8.5-doc/)
-- [Tomcat 7](https://tomcat.apache.org/tomcat-7.0-doc/)
+```shell
+-Djava.util.logging.config.file=/Users/haitao/Desktop/tomcat/output/build/conf/logging.properties
+-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+-Djdk.tls.ephemeralDHKeySize=2048
+-Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+-Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+-Dcatalina.base=/Users/haitao/Desktop/tomcat/output/build
+-Dcatalina.home=/Users/haitao/Desktop/tomcat/output/build
+-Djava.io.tmpdir=/Users/haitao/Desktop/tomcat/output/build/temp
+-Dfile.encoding=UTF-8
+-Duser.language=en
+-Duser.region=US
+```
 
-### Installation
+![image-20220925122642826](.README_imgs/image-20220925122642826.png)
 
-Please see [RUNNING.txt](RUNNING.txt) for more info.
 
-### Licensing
 
-Please see [LICENSE](LICENSE) for more info.
-
-### Support and Mailing List Information
-
-* Free community support is available through the
-[tomcat-users](https://tomcat.apache.org/lists.html#tomcat-users) email list and
-a dedicated [IRC channel](https://tomcat.apache.org/irc.html) (#tomcat on
-Freenode).
-
-* If you want freely available support for running Apache Tomcat, please see the
-resources page [here](https://tomcat.apache.org/findhelp.html).
-
-* If you want to be informed about new code releases, bug fixes,
-security fixes, general news and information about Apache Tomcat, please
-subscribe to the
-[tomcat-announce](https://tomcat.apache.org/lists.html#tomcat-announce) email
-list.
-
-* If you have a concrete bug report for Apache Tomcat, please see the
-instructions for reporting a bug
-[here](https://tomcat.apache.org/bugreport.html).
-
-### Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for more info.
+## 如何 Debug 部署的项目
